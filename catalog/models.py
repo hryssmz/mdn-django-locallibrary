@@ -14,10 +14,10 @@ class Author(models.Model):
     class Meta:
         ordering = ["last_name", "first_name"]
 
-    def get_absolute_url(self):
+    def get_absolute_url(self) -> str:
         return reverse("author-detail", args=[str(self.id)])
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.last_name}, {self.first_name}"
 
 
@@ -40,10 +40,10 @@ class Book(models.Model):
         "Genre", help_text="Select a genre for this book"
     )
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.title
 
-    def get_absolute_url(self):
+    def get_absolute_url(self) -> str:
         return reverse("book-detail", args=[str(self.id)])
 
 
@@ -53,7 +53,7 @@ class BookInstance(models.Model):
         default=uuid.uuid4,
         help_text="Unique ID for this particular book across whole library",
     )
-    book = models.ForeignKey("Book", on_delete=models.RESTRICT, null=True)
+    book = models.ForeignKey("Book", on_delete=models.PROTECT)
     imprint = models.CharField(max_length=200)
     due_back = models.DateField(null=True, blank=True)
 
@@ -75,7 +75,7 @@ class BookInstance(models.Model):
     class Meta:
         ordering = ["due_back"]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.id} ({self.book.title})"
 
 
@@ -84,5 +84,5 @@ class Genre(models.Model):
         max_length=200, help_text="Enter a book genre (e.g. Science Fiction)"
     )
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name
