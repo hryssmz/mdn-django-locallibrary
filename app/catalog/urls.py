@@ -1,0 +1,2 @@
+# catalog/urls.py
+urlpatterns = []
