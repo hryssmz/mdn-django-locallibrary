@@ -64,17 +64,17 @@ pip install djangorestframework
 
 ```bash
 # Black
-black --check app/
+black --check .
 
 # Flake8
-flake8 --quiet app/
+flake8 --quiet .
 
 # Isort
-isort --check app/
+isort --check .
 
 # MyPy
-mypy app/
+mypy .
 
 # All
-black --check app/ && flake8 --quiet app/ && isort --check app/ && mypy app/
+black --check . && flake8 --quiet . && isort --check . && mypy .
 ```
