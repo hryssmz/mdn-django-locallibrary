@@ -50,8 +50,16 @@ pip install mypy
 
 ```bash
 pip install django
-pip install django-stubs
 pip install djangorestframework
+```
+
+#### 2.1.3. MyPy Stubs
+
+---
+
+```bash
+pip install django-stubs
+pip install djangorestframework-stubs
 ```
 
 ## 3. Scripts
