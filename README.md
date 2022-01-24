@@ -39,6 +39,7 @@ pip install --upgrade pip
 
 ```bash
 pip install black
+pip install coverage
 pip install flake8
 pip install isort
 pip install mypy
@@ -71,18 +72,8 @@ pip install djangorestframework-stubs
 ---
 
 ```bash
-# Black
-black --check .
-
-# Flake8
-flake8 --quiet .
-
-# Isort
-isort --check .
-
-# MyPy
-mypy .
-
-# All
+# Test
+coverage run && coverage html && coverage report
+# Check linting and formatting
 black --check . && flake8 --quiet . && isort --check . && mypy .
 ```

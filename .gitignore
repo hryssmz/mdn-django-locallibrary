@@ -1,6 +1,8 @@
+.coverage
 .mypy_cache/
 __pycache__/
-migrations/
 db.sqlite3
+htmlcov/
+migrations/
 node_modules/
 venv/
