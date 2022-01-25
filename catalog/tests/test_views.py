@@ -5,22 +5,28 @@ from django.urls import reverse
 from ..models import Author, Book, BookInstance, Genre
 
 
-class IndexTest(TestCase):
+class IndexTestCase(TestCase):
     def setUp(self) -> None:
-        author = Author.objects.create(first_name="John", last_name="Doe")
-        genre = Genre.objects.create(name="Fantasy")
-        book = Book.objects.create(
+        Author.objects.create(id=1, first_name="John", last_name="Doe")
+        Genre.objects.create(id=1, name="Fantasy")
+        Book.objects.create(
             title="Some Title",
-            author_id=author.id,
+            author_id=1,
             summary="A short summary.",
             isbn="1234567890000",
         )
-        book.genre.add(genre)
+        Book.objects.get(id=1).genre.add(Genre.objects.get(id=1))
         BookInstance.objects.create(
-            book_id=book.id, imprint="Foo Imprint", status="m"
+            id="00000000-0000-0000-0000-000000000001",
+            book_id=1,
+            imprint="Foo Imprint",
+            status="m",
         )
         BookInstance.objects.create(
-            book_id=book.id, imprint="Bar Imprint", status="a"
+            id="00000000-0000-0000-0000-000000000002",
+            book_id=1,
+            imprint="Bar Imprint",
+            status="a",
         )
 
     def test_get(self) -> None:
