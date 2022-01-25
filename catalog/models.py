@@ -4,6 +4,8 @@ import uuid
 from django.db import models
 from django.urls import reverse
 
+from .utils import format_date
+
 
 class Author(models.Model):
     first_name = models.CharField(max_length=100)
@@ -17,11 +19,14 @@ class Author(models.Model):
 
     @property
     def lifespan(self) -> str:
-        return f"{self.date_of_birth or ''} - {self.date_of_death or ''}"
+        return (
+            f"{format_date(self.date_of_birth)} - "
+            f"{format_date(self.date_of_death)}"
+        )
 
     @property
-    def view_url(self) -> str:
-        return reverse("author-detail", kwargs={"pk": self.id})
+    def url(self) -> str:
+        return reverse("author", kwargs={"pk": self.id})
 
     def __str__(self) -> str:
         return self.name
@@ -35,8 +40,8 @@ class Book(models.Model):
     genre = models.ManyToManyField("Genre")
 
     @property
-    def view_url(self) -> str:
-        return reverse("book-detail", kwargs={"pk": self.id})
+    def url(self) -> str:
+        return reverse("book", kwargs={"pk": self.id})
 
     def __str__(self) -> str:
         return self.title
@@ -57,12 +62,24 @@ class BookInstance(models.Model):
         max_length=1, choices=LOAN_STATUS, blank=True, default="m"
     )
 
+    @property
+    def url(self) -> str:
+        return reverse("bookinstance", kwargs={"pk": self.id})
+
+    @property
+    def due_back_display(self) -> str:
+        return format_date(self.due_back)
+
     def __str__(self) -> str:
         return f"{self.id} ({self.book.title})"
 
 
 class Genre(models.Model):
     name = models.CharField(max_length=200)
+
+    @property
+    def url(self) -> str:
+        return reverse("genre", kwargs={"pk": self.id})
 
     def __str__(self) -> str:
         return self.name

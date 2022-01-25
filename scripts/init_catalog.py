@@ -18,7 +18,7 @@ def main() -> None:
     def init_book_instances(books: list[Book]) -> list[BookInstance]:
         DATA: list[tuple[Book, str, Optional[str], Optional[str]]] = [
             (books[0], "London Gollancz, 2014.", "a", None),
-            (books[1], " Gollancz, 2011.", "o", None),
+            (books[1], " Gollancz, 2011.", "o", "2022-12-31"),
             (books[2], " Gollancz, 2015.", None, None),
             (
                 books[3],
@@ -54,7 +54,7 @@ def main() -> None:
                 books[4],
                 "New York, NY Tom Doherty Associates, LLC, 2015.",
                 "o",
-                None,
+                "2022-01-01",
             ),
             (books[0], "Imprint XXX2", None, None),
             (books[1], "Imprint XXX3", None, None),

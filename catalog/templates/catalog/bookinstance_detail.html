@@ -1,0 +1,32 @@
+<!-- catalog/templates/catalog/bookinstance_detail.html -->
+{% extends "base_generic.html" %}
+
+{% block title %}
+  Copy: {{ bookinstance.book.title }}
+{% endblock title %}
+
+{% block content %}
+  <h1>Copy: {{ bookinstance.book.title }}</h1>
+  <p>
+    <strong>Title:</strong> <a href="{{ bookinstance.book.url }}"></a>
+    {{ bookinstance.book.title }}
+  </p>
+  <p><strong>Imprint:</strong> {{ bookinstance.imprint }}</p>
+
+  <p>
+    <strong>Status:</strong>
+    <span class="
+      {% if bookinstance.status == 'a' %}
+        text-success
+      {% elif bookinstance.status == 'm' %}
+        text-danger
+      {% else %}
+        text-warning
+      {% endif %}
+    ">{{ bookinstance.get_status_display }}</span>
+
+    {% if bookinstance.status != "a" and bookinstance.due_back %}
+      <p><strong>Due back:</strong> {{ bookinstance.due_back_display }}</p>
+    {% endif %}
+  </p>
+{% endblock content %}

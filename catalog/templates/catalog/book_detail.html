@@ -10,7 +10,7 @@
 
   <p>
     <strong>Author:</strong>
-    <a href="{{ book.author.view_url }}">{{ book.author.name }}</a>
+    <a href="{{ book.author.url }}">{{ book.author.name }}</a>
   </p>
   <p><strong>Summary:</strong> {{ book.summary }}</p>
   <p><strong>ISBN:</strong> {{ book.isbn }}</p>
@@ -32,9 +32,11 @@
         ">
           {{ copy.get_status_display }}
         </p>
-        {% if copy.status != "a" %}
+        {% if copy.status != "a" and copy.due_back %}
           <p>
-            <strong>Due to be returned:</strong> {{ copy.due_back }}</p>
+            <strong>Due to be returned:</strong>
+            {{ copy.due_back_display }}
+          </p>
         {% endif %}
         <p><strong>Imprint:</strong> {{ copy.imprint }}</p>
         <p class="text-muted"><strong>Id:</strong> {{ copy.id }}</p>

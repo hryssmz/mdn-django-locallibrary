@@ -1,18 +1,17 @@
-<!-- catalog/templates/catalog/author_detail.html -->
+<!-- catalog/templates/catalog/genre_detail.html -->
 {% extends "base_generic.html" %}
 
 {% block title %}
-  Author: {{ author.name }}
+  Genre: {{ genre }}
 {% endblock title %}
 
 {% block content %}
-  <h1>Author: {{ author.name }}</h1>
-  <p>{{ author.lifespan }}</p>
+  <h1>Genre: {{ genre }}</h1>
 
   <div style="margin-left: 20px; margin-top: 20px">
     <h4>Books</h4>
-    {% if author.book_set.all %}
-      {% for book in author.book_set.all %}
+    {% if genre.book_set.all %}
+      {% for book in genre.book_set.all %}
         <dt>
           <a href="{{ book.url }}">{{ book.title }}</a>
           ({{ book.bookinstance_set.count }})
@@ -20,7 +19,7 @@
         <dd>{{ book.summary }}</dd>
       {% endfor %}
     {% else %}
-      <p>This author has no books.</p>
+      <p>This genre has no books.</p>
     {% endif %}
   </div>
 {% endblock content %}

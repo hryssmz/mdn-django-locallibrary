@@ -7,12 +7,15 @@ from ..models import Author, Book, BookInstance, Genre
 class AuthorTest(TestCase):
     def test_create_author(self) -> None:
         author: Author = Author.objects.create(
-            first_name="John", last_name="Doe", date_of_birth="1970-01-01"
+            first_name="John",
+            last_name="Doe",
+            date_of_birth="1970-01-01",
         )
+        author.refresh_from_db()
 
         self.assertEqual(author.name, "John, Doe")
-        self.assertEqual(author.lifespan, "1970-01-01 - ")
-        self.assertEqual(author.view_url, "/catalog/author/1")
+        self.assertEqual(author.lifespan, "Jan 01, 1970 - ")
+        self.assertEqual(author.url, "/catalog/author/1")
         self.assertEqual(str(author), "John, Doe")
 
 
@@ -28,7 +31,7 @@ class BookTest(TestCase):
             isbn="1234567890000",
         )
 
-        self.assertEqual(book.view_url, "/catalog/book/1")
+        self.assertEqual(book.url, "/catalog/book/1")
         self.assertEqual(str(book), "Some Title")
 
 
@@ -42,22 +45,28 @@ class BookInstanceTest(TestCase):
             isbn="1234567890000",
         )
 
-    def test_create_book_instance(self) -> None:
-        book_instance: BookInstance = BookInstance.objects.create(
+    def test_create_bookinstance(self) -> None:
+        bookinstance: BookInstance = BookInstance.objects.create(
             book_id=self.book.id,
             imprint="Foo Imprint",
             due_back="2020-01-01",
             status="o",
         )
+        bookinstance.refresh_from_db()
 
         self.assertEqual(
-            str(book_instance),
-            f"{book_instance.id} ({book_instance.book.title})",
+            bookinstance.url, f"/catalog/bookinstance/{bookinstance.id}"
+        )
+        self.assertEqual(bookinstance.due_back_display, "Jan 01, 2020")
+        self.assertEqual(
+            str(bookinstance),
+            f"{bookinstance.id} ({bookinstance.book.title})",
         )
 
 
 class GenreTest(TestCase):
     def test_create_genre(self) -> None:
-        genre = Genre.objects.create(name="Fantasy")
+        genre: Genre = Genre.objects.create(name="Fantasy")
 
         self.assertEqual(str(genre), "Fantasy")
+        self.assertEqual(genre.url, "/catalog/genre/1")

@@ -1,0 +1,37 @@
+<!-- catalog/templates/catalog/bookinstance_list.html -->
+{% extends "base_generic.html" %}
+
+{% block title %}
+  Book Copy List
+{% endblock title %}
+
+{% block content %}
+  <h1>Book Copy List</h1>
+  {% if bookinstance_list %}
+    <ul>
+      {% for copy in bookinstance_list %}
+        <li>
+          <a href="{{ copy.url }}">
+            {{ copy.book.title }} : {{ copy.imprint }}
+          </a>
+          -
+          <span class="
+            {% if copy.status == 'a' %}
+              text-success
+            {% elif copy.status == 'm' %}
+              text-danger
+            {% else %}
+              text-warning
+            {% endif %}
+          ">{{ copy.get_status_display }}</span>
+
+          {% if copy.status != "a" and copy.due_back %}
+            <span>(Due: {{ copy.due_back_display }})</span>
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>There are no book copies in this library.</p>
+  {% endif %}
+{% endblock content %}

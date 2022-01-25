@@ -1,0 +1,21 @@
+<!-- catalog/templates/catalog/genre_list.html -->
+{% extends "base_generic.html" %}
+
+{% block title %}
+  Genre List
+{% endblock title %}
+
+{% block content %}
+  <h1>Genre List</h1>
+  {% if genre_list %}
+    <ul>
+      {% for genre in genre_list %}
+        <li>
+          <a href="{{ genre.url }}">{{ genre.name }}</a>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    There are no genres.
+  {% endif %}
+{% endblock content %}

@@ -33,3 +33,19 @@ class BookListView(generic.ListView[Book]):
 
 class BookDetailView(generic.DetailView[Book]):
     model = Book
+
+
+class BookInstanceListView(generic.ListView[BookInstance]):
+    model = BookInstance
+
+
+class BookInstanceDetailView(generic.DetailView[BookInstance]):
+    model = BookInstance
+
+
+class GenreListView(generic.ListView[Genre]):
+    model = Genre
+
+
+class GenreDetailView(generic.DetailView[Genre]):
+    model = Genre
