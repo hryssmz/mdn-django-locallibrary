@@ -1,0 +1,26 @@
+<!-- catalog/templates/catalog/author_detail.html -->
+{% extends "base_generic.html" %}
+
+{% block title %}
+  Author: {{ author.name }}
+{% endblock title %}
+
+{% block content %}
+  <h1>Author: {{ author.name }}</h1>
+  <p>{{ author.lifespan }}</p>
+
+  <div style="margin-left: 20px; margin-top: 20px">
+    <h4>Books</h4>
+    {% if author.book_set.all %}
+      {% for book in author.book_set.all %}
+        <dt>
+          <a href="{{ book.view_url }}">{{ book.title }}</a>
+          ({{ book.bookinstance_set.count }})
+        </dt>
+        <dd>{{ book.summary }}</dd>
+      {% endfor %}
+    {% else %}
+      <p>This author has no books.</p>
+    {% endif %}
+  </div>
+{% endblock content %}

@@ -1,0 +1,21 @@
+<!-- catalog/templates/catalog/author_list.html -->
+{% extends "base_generic.html" %}
+
+{% block title %}Author List{% endblock title %}
+
+{% block content %}
+<h1>Author List</h1>
+  {% if author_list %}
+    <ul>
+      {% for author in author_list %}
+        <li>
+          <a href="{{ author.view_url }}">
+            {{ author.name }} ({{ author.lifespan }})
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>There are no authors.</p>
+  {% endif %}
+{% endblock content %}

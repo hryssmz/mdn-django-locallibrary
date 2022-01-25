@@ -2,6 +2,7 @@
 import uuid
 
 from django.db import models
+from django.urls import reverse
 
 
 class Author(models.Model):
@@ -10,8 +11,20 @@ class Author(models.Model):
     date_of_birth = models.DateField(null=True, blank=True)
     date_of_death = models.DateField(null=True, blank=True)
 
-    def __str__(self) -> str:
+    @property
+    def name(self) -> str:
         return f"{self.first_name}, {self.last_name}"
+
+    @property
+    def lifespan(self) -> str:
+        return f"{self.date_of_birth or ''} - {self.date_of_death or ''}"
+
+    @property
+    def view_url(self) -> str:
+        return reverse("author-detail", kwargs={"pk": self.id})
+
+    def __str__(self) -> str:
+        return self.name
 
 
 class Book(models.Model):
@@ -20,6 +33,10 @@ class Book(models.Model):
     summary = models.TextField(max_length=1000)
     isbn = models.CharField(max_length=13, unique=True)
     genre = models.ManyToManyField("Genre")
+
+    @property
+    def view_url(self) -> str:
+        return reverse("book-detail", kwargs={"pk": self.id})
 
     def __str__(self) -> str:
         return self.title

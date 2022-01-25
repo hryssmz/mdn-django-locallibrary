@@ -3,7 +3,9 @@
 <html lang="en">
 
 <head>
-  {% block title %}<title>Local Library</title>{% endblock title %}
+  <title>
+    {% block title %}Local Library{% endblock title %}
+  </title>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet"
@@ -22,8 +24,8 @@
         {% block sidebar %}
         <div class="sidebar-nav">
           <li><a href="{% url 'index' %}">Home</a></li>
-          <li><a href="">All books</a></li>
-          <li><a href="">All authors </a></li>
+          <li><a href="{% url 'books' %}">All books</a></li>
+          <li><a href="{% url 'authors' %}">All authors </a></li>
         </div>
         {% endblock sidebar %}
       </div>

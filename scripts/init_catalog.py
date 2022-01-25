@@ -169,7 +169,7 @@ wiped out...""",
     def init_authors() -> list[Author]:
         DATA: list[tuple[str, str, Optional[str], Optional[str]]] = [
             ("Patrick", "Rothfuss", "1973-06-06", None),
-            ("Ben", "Bova", "1932-11-8", None),
+            ("Ben", "Bova", "1932-11-08", None),
             ("Isaac", "Asimov", "1920-01-02", "1992-04-06"),
             ("Bob", "Billings", None, None),
             ("Jim", "Jones", "1971-12-16", None),
