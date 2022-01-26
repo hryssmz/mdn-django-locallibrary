@@ -16,7 +16,7 @@ def index(request: HttpRequest) -> HttpResponse:
         "num_authors": Author.objects.all().count(),
         "num_genres": Genre.objects.all().count(),
     }
-    return render(request, "index.html", context=context)
+    return render(request, "catalog/index.html", context=context)
 
 
 class AuthorListView(generic.ListView[Author]):

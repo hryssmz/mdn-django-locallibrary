@@ -1,7 +1,6 @@
 # catalog/tests/test_apis.py
 from django.db.transaction import atomic
 from django.test import TestCase
-from django.urls import reverse
 
 from ..models import Author, Book, BookInstance, Genre
 
@@ -17,7 +16,7 @@ class IndexApiTestCase(TestCase):
                 summary="A short summary.",
                 isbn="1234567890000",
             )
-            Book.objects.get(id=1).genre.add(Genre.objects.get(id=1))
+            Book.objects.get(id=1).genre.add(1)
             BookInstance.objects.create(
                 id="00000000-0000-0000-0000-000000000001",
                 book_id=1,
@@ -31,7 +30,7 @@ class IndexApiTestCase(TestCase):
                 status="a",
             )
 
-        res = self.client.get(reverse("index-api"))
+        res = self.client.get("/catalog/api/")
 
         self.assertEqual(res.status_code, 200)
         self.assertDictEqual(
@@ -44,3 +43,199 @@ class IndexApiTestCase(TestCase):
                 "num_genres": 1,
             },
         )
+
+
+class AuthorListAPIViewTestCase(TestCase):
+    def test_get(self) -> None:
+        Author.objects.create(
+            id=1,
+            first_name="John",
+            last_name="Doe",
+            date_of_birth="1970-01-01",
+        )
+        res = self.client.get("/catalog/api/authors/")
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(len(res.json()), 1)
+        self.assertDictEqual(
+            res.json()[0],
+            {
+                "id": 1,
+                "first_name": "John",
+                "last_name": "Doe",
+                "date_of_birth": "1970-01-01",
+                "date_of_death": None,
+            },
+        )
+
+
+class AuthorDetailAPIViewTestCase(TestCase):
+    def test_get(self) -> None:
+        Author.objects.create(
+            id=1,
+            first_name="John",
+            last_name="Doe",
+            date_of_birth="1970-01-01",
+        )
+        res = self.client.get("/catalog/api/author/1/")
+
+        self.assertEqual(res.status_code, 200)
+        self.assertDictEqual(
+            res.json(),
+            {
+                "id": 1,
+                "first_name": "John",
+                "last_name": "Doe",
+                "date_of_birth": "1970-01-01",
+                "date_of_death": None,
+            },
+        )
+
+
+class BookInstanceListAPIViewTestCase(TestCase):
+    def test_get(self) -> None:
+        with atomic():
+            Author.objects.create(id=1, first_name="John", last_name="Doe")
+            Book.objects.create(
+                id=1,
+                title="Some Title",
+                author_id=1,
+                summary="A short summary.",
+                isbn="1234567890000",
+            )
+            BookInstance.objects.create(
+                id="00000000-0000-0000-0000-000000000001",
+                book_id=1,
+                imprint="Foo Imprint",
+                due_back="2020-01-01",
+                status="o",
+            )
+
+        res = self.client.get("/catalog/api/bookinstances/")
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(len(res.json()), 1)
+        self.assertDictEqual(
+            res.json()[0],
+            {
+                "id": "00000000-0000-0000-0000-000000000001",
+                "book": 1,
+                "imprint": "Foo Imprint",
+                "due_back": "2020-01-01",
+                "status": "o",
+            },
+        )
+
+
+class BookInstanceDetailAPIViewTestCase(TestCase):
+    def test_get(self) -> None:
+        with atomic():
+            Author.objects.create(id=1, first_name="John", last_name="Doe")
+            Book.objects.create(
+                id=1,
+                title="Some Title",
+                author_id=1,
+                summary="A short summary.",
+                isbn="1234567890000",
+            )
+            BookInstance.objects.create(
+                id="00000000-0000-0000-0000-000000000001",
+                book_id=1,
+                imprint="Foo Imprint",
+                due_back="2020-01-01",
+                status="o",
+            )
+
+        res = self.client.get(
+            "/catalog/api/bookinstance/00000000-0000-0000-0000-000000000001/"
+        )
+
+        self.assertEqual(res.status_code, 200)
+        self.assertDictEqual(
+            res.json(),
+            {
+                "id": "00000000-0000-0000-0000-000000000001",
+                "book": 1,
+                "imprint": "Foo Imprint",
+                "due_back": "2020-01-01",
+                "status": "o",
+            },
+        )
+
+
+class BookListAPIViewTestCase(TestCase):
+    def test_get(self) -> None:
+        with atomic():
+            Author.objects.create(id=1, first_name="John", last_name="Doe")
+            Book.objects.create(
+                id=1,
+                title="Some Title",
+                author_id=1,
+                summary="A short summary.",
+                isbn="1234567890000",
+            )
+
+        res = self.client.get("/catalog/api/books/")
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(len(res.json()), 1)
+        self.assertDictEqual(
+            res.json()[0],
+            {
+                "id": 1,
+                "title": "Some Title",
+                "author": 1,
+                "summary": "A short summary.",
+                "isbn": "1234567890000",
+                "genre": [],
+            },
+        )
+
+
+class BookDetailAPIViewTestCase(TestCase):
+    def test_get(self) -> None:
+        with atomic():
+            Author.objects.create(id=1, first_name="John", last_name="Doe")
+            Book.objects.create(
+                id=1,
+                title="Some Title",
+                author_id=1,
+                summary="A short summary.",
+                isbn="1234567890000",
+            )
+
+        res = self.client.get("/catalog/api/book/1/")
+
+        self.assertEqual(res.status_code, 200)
+        self.assertDictEqual(
+            res.json(),
+            {
+                "id": 1,
+                "title": "Some Title",
+                "author": 1,
+                "summary": "A short summary.",
+                "isbn": "1234567890000",
+                "genre": [],
+            },
+        )
+
+
+class GenreListAPIViewTestCase(TestCase):
+    def test_get(self) -> None:
+        Genre.objects.create(id=1, name="Fantasy")
+
+        res = self.client.get("/catalog/api/genres/")
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(len(res.json()), 1)
+        self.assertDictEqual(res.json()[0], {"id": 1, "name": "Fantasy"})
+
+
+class GenreDetailAPIViewTestCase(TestCase):
+    def test_get(self) -> None:
+        Genre.objects.create(id=1, name="Fantasy")
+
+        res = self.client.get("/catalog/api/genre/1/")
+
+        self.assertEqual(res.status_code, 200)
+        self.assertDictEqual(res.json(), {"id": 1, "name": "Fantasy"})

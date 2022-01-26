@@ -26,7 +26,7 @@ class Author(models.Model):
 
     @property
     def url(self) -> str:
-        return reverse("author", kwargs={"pk": self.id})
+        return reverse("catalog:author", kwargs={"pk": self.id})
 
     def __str__(self) -> str:
         return self.name
@@ -41,20 +41,20 @@ class Book(models.Model):
 
     @property
     def url(self) -> str:
-        return reverse("book", kwargs={"pk": self.id})
+        return reverse("catalog:book", kwargs={"pk": self.id})
 
     def __str__(self) -> str:
         return self.title
 
 
 class BookInstance(models.Model):
-    id = models.UUIDField(default=uuid.uuid4, primary_key=True)
     LOAN_STATUS = (
         ("m", "Maintenance"),
         ("o", "On loan"),
         ("a", "Available"),
         ("r", "Reserved"),
     )
+    id = models.UUIDField(default=uuid.uuid4, primary_key=True)
     book = models.ForeignKey("Book", on_delete=models.CASCADE)
     imprint = models.CharField(max_length=200)
     due_back = models.DateField(null=True, blank=True)
@@ -64,7 +64,7 @@ class BookInstance(models.Model):
 
     @property
     def url(self) -> str:
-        return reverse("bookinstance", kwargs={"pk": self.id})
+        return reverse("catalog:bookinstance", kwargs={"pk": self.id})
 
     @property
     def due_back_display(self) -> str:
@@ -79,7 +79,7 @@ class Genre(models.Model):
 
     @property
     def url(self) -> str:
-        return reverse("genre", kwargs={"pk": self.id})
+        return reverse("catalog:genre", kwargs={"pk": self.id})
 
     def __str__(self) -> str:
         return self.name

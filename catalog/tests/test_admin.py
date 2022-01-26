@@ -22,7 +22,7 @@ class BookAdminTestCase(TestCase):
             Genre.objects.create(id=2, name="History")
             Genre.objects.create(id=3, name="Essay")
             Genre.objects.create(id=4, name="Mystery")
-            Book.objects.get(id=1).genre.set(Genre.objects.all())
+            Book.objects.get(id=1).genre.set([1, 2, 3, 4])
 
         book = Book.objects.get(id=1)
         admin = BookAdmin(model=Book, admin_site=AdminSite())

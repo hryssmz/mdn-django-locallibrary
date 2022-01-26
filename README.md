@@ -73,7 +73,7 @@ pip install djangorestframework-stubs
 
 ```bash
 # Test
-coverage run && coverage html && coverage report
+clear && coverage run && coverage html && coverage report
 # Check linting and formatting
 black --check . && flake8 --quiet . && isort --check . && mypy .
 ```

@@ -1,4 +1,4 @@
-<!-- catalog/templates/base_generic.html -->
+<!-- catalog/templates/catalog/layout.html -->
 <!DOCTYPE html>
 <html lang="en">
 
@@ -23,11 +23,13 @@
       <div class="col-sm-2">
         {% block sidebar %}
         <div class="sidebar-nav">
-          <li><a href="{% url 'index' %}">Home</a></li>
-          <li><a href="{% url 'books' %}">All books</a></li>
-          <li><a href="{% url 'authors' %}">All authors</a></li>
-          <li><a href="{% url 'bookinstances' %}">All Book Copies</a></li>
-          <li><a href="{% url 'genres' %}">All Genres</a></li>
+          <li><a href="{% url 'catalog:index' %}">Home</a></li>
+          <li><a href="{% url 'catalog:books' %}">All books</a></li>
+          <li><a href="{% url 'catalog:authors' %}">All authors</a></li>
+          <li>
+            <a href="{% url 'catalog:bookinstances' %}">All Book Copies</a>
+          </li>
+          <li><a href="{% url 'catalog:genres' %}">All Genres</a></li>
         </div>
         {% endblock sidebar %}
       </div>

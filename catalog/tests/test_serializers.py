@@ -18,11 +18,10 @@ class AuthorSerializerTestCase(TestCase):
             last_name="Doe",
             date_of_birth="1970-01-01",
         )
-        ser = AuthorSerializer(Author.objects.all(), many=True)
+        ser = AuthorSerializer(Author.objects.get(id=1))
 
-        self.assertEqual(len(ser.data), 1)
         self.assertDictEqual(
-            dict(ser.data[0]),
+            dict(ser.data),
             {
                 "id": 1,
                 "first_name": "John",
@@ -33,8 +32,8 @@ class AuthorSerializerTestCase(TestCase):
         )
 
     def test_deserialize(self) -> None:
-        data = [{"first_name": "Lily", "last_name": "Bush"}]
-        ser = AuthorSerializer(data=data, many=True)
+        data = {"first_name": "Lily", "last_name": "Bush"}
+        ser = AuthorSerializer(data=data)
         if ser.is_valid():
             ser.save()
 
@@ -52,7 +51,7 @@ class BookInstanceSerializerTestCase(TestCase):
             isbn="1234567890000",
         )
 
-    def test_serialize(self) -> None:
+    def test_serialize_many(self) -> None:
         BookInstance.objects.create(
             id="00000000-0000-0000-0000-000000000001",
             book_id=1,
@@ -60,11 +59,10 @@ class BookInstanceSerializerTestCase(TestCase):
             due_back="2020-01-01",
             status="o",
         )
-        ser = BookInstanceSerializer(BookInstance.objects.all(), many=True)
+        ser = BookInstanceSerializer(BookInstance.objects.get(id=1))
 
-        self.assertEqual(len(ser.data), 1)
         self.assertDictEqual(
-            dict(ser.data[0]),
+            dict(ser.data),
             {
                 "id": "00000000-0000-0000-0000-000000000001",
                 "book": 1,
@@ -75,8 +73,8 @@ class BookInstanceSerializerTestCase(TestCase):
         )
 
     def test_deserialize(self) -> None:
-        data = [{"book": 1, "imprint": "Foo Imprint", "status": "a"}]
-        ser = BookInstanceSerializer(data=data, many=True)
+        data = {"book": 1, "imprint": "Foo Imprint", "status": "a"}
+        ser = BookInstanceSerializer(data=data)
         if ser.is_valid():
             ser.save()
 
@@ -86,6 +84,7 @@ class BookInstanceSerializerTestCase(TestCase):
 class BookSerializerTestCase(TestCase):
     def setUp(self) -> None:
         Author.objects.create(id=1, first_name="John", last_name="Doe")
+        Genre.objects.create(id=1, name="Fantasy")
 
     def test_serialize(self) -> None:
         Book.objects.create(
@@ -95,48 +94,47 @@ class BookSerializerTestCase(TestCase):
             summary="A short summary.",
             isbn="1234567890000",
         )
-        ser = BookSerializer(Book.objects.all(), many=True)
+        Book.objects.get(id=1).genre.add(1)
+        ser = BookSerializer(Book.objects.get(id=1))
 
-        self.assertEqual(len(ser.data), 1)
         self.assertDictEqual(
-            dict(ser.data[0]),
+            dict(ser.data),
             {
                 "id": 1,
                 "title": "Some Title",
                 "author": 1,
                 "summary": "A short summary.",
                 "isbn": "1234567890000",
-                "genre": [],
+                "genre": [1],
             },
         )
 
     def test_deserialize(self) -> None:
-        data = [
-            {
-                "title": "Some Title",
-                "author": 1,
-                "summary": "A short summary.",
-                "isbn": "1234567890000",
-            }
-        ]
-        ser = BookSerializer(data=data, many=True)
+        data = {
+            "title": "Some Title",
+            "author": 1,
+            "summary": "A short summary.",
+            "isbn": "1234567890000",
+            "genre": [1],
+        }
+        ser = BookSerializer(data=data)
         if ser.is_valid():
             ser.save()
 
         self.assertEqual(Book.objects.count(), 1)
+        self.assertEqual(Book.objects.get(id=1).genre.all().count(), 1)
 
 
 class GenreSerializerTestCase(TestCase):
     def test_serialize(self) -> None:
         Genre.objects.create(id=1, name="Fantasy")
-        ser = GenreSerializer(Genre.objects.all(), many=True)
+        ser = GenreSerializer(Genre.objects.get(id=1))
 
-        self.assertEqual(len(ser.data), 1)
-        self.assertDictEqual(dict(ser.data[0]), {"id": 1, "name": "Fantasy"})
+        self.assertDictEqual(dict(ser.data), {"id": 1, "name": "Fantasy"})
 
     def test_deserialize(self) -> None:
-        data = [{"name": "Fantasy"}]
-        ser = GenreSerializer(data=data, many=True)
+        data = {"name": "Fantasy"}
+        ser = GenreSerializer(data=data)
         if ser.is_valid():
             ser.save()
 
