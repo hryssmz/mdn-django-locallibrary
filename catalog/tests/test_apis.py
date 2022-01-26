@@ -1,11 +1,11 @@
 # catalog/tests/test_apis.py
 from django.db.transaction import atomic
-from django.test import TestCase
+from rest_framework.test import APITestCase
 
 from ..models import Author, Book, BookInstance, Genre
 
 
-class IndexApiTestCase(TestCase):
+class IndexApiTestCase(APITestCase):
     def test_get(self) -> None:
         with atomic():
             Author.objects.create(id=1, first_name="John", last_name="Doe")
@@ -45,7 +45,7 @@ class IndexApiTestCase(TestCase):
         )
 
 
-class AuthorListAPIViewTestCase(TestCase):
+class AuthorListAPIViewTestCase(APITestCase):
     def test_get(self) -> None:
         Author.objects.create(
             id=1,
@@ -69,7 +69,7 @@ class AuthorListAPIViewTestCase(TestCase):
         )
 
 
-class AuthorDetailAPIViewTestCase(TestCase):
+class AuthorDetailAPIViewTestCase(APITestCase):
     def test_get(self) -> None:
         Author.objects.create(
             id=1,
@@ -92,7 +92,7 @@ class AuthorDetailAPIViewTestCase(TestCase):
         )
 
 
-class BookInstanceListAPIViewTestCase(TestCase):
+class BookInstanceListAPIViewTestCase(APITestCase):
     def test_get(self) -> None:
         with atomic():
             Author.objects.create(id=1, first_name="John", last_name="Doe")
@@ -127,7 +127,7 @@ class BookInstanceListAPIViewTestCase(TestCase):
         )
 
 
-class BookInstanceDetailAPIViewTestCase(TestCase):
+class BookInstanceDetailAPIViewTestCase(APITestCase):
     def test_get(self) -> None:
         with atomic():
             Author.objects.create(id=1, first_name="John", last_name="Doe")
@@ -163,7 +163,7 @@ class BookInstanceDetailAPIViewTestCase(TestCase):
         )
 
 
-class BookListAPIViewTestCase(TestCase):
+class BookListAPIViewTestCase(APITestCase):
     def test_get(self) -> None:
         with atomic():
             Author.objects.create(id=1, first_name="John", last_name="Doe")
@@ -192,7 +192,7 @@ class BookListAPIViewTestCase(TestCase):
         )
 
 
-class BookDetailAPIViewTestCase(TestCase):
+class BookDetailAPIViewTestCase(APITestCase):
     def test_get(self) -> None:
         with atomic():
             Author.objects.create(id=1, first_name="John", last_name="Doe")
@@ -220,7 +220,7 @@ class BookDetailAPIViewTestCase(TestCase):
         )
 
 
-class GenreListAPIViewTestCase(TestCase):
+class GenreListAPIViewTestCase(APITestCase):
     def test_get(self) -> None:
         Genre.objects.create(id=1, name="Fantasy")
 
@@ -231,7 +231,7 @@ class GenreListAPIViewTestCase(TestCase):
         self.assertDictEqual(res.json()[0], {"id": 1, "name": "Fantasy"})
 
 
-class GenreDetailAPIViewTestCase(TestCase):
+class GenreDetailAPIViewTestCase(APITestCase):
     def test_get(self) -> None:
         Genre.objects.create(id=1, name="Fantasy")
 

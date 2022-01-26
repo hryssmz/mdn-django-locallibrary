@@ -56,6 +56,19 @@ class AuthorListViewTestCase(TestCase):
         self.assertEqual(res.context["author_list"].count(), 1)
         self.assertEqual(res.context["author_list"].first().id, 1)
 
+    def test_pagination(self) -> None:
+        Author.objects.bulk_create(
+            [
+                Author(first_name=f"John{i}", last_name=f"Doe{i}")
+                for i in range(11)
+            ]
+        )
+        res = self.client.get("/catalog/authors/")
+
+        self.assertTrue(res.context["is_paginated"])
+        self.assertEqual(res.context["paginator"].num_pages, 2)
+        self.assertEqual(res.context["paginator"].per_page, 10)
+
 
 class AuthorDetailViewTestCase(TestCase):
     def test_get(self) -> None:
@@ -73,24 +86,24 @@ class AuthorDetailViewTestCase(TestCase):
 
 
 class BookInstanceListViewTestCase(TestCase):
-    def test_get(self) -> None:
-        with atomic():
-            Author.objects.create(id=1, first_name="John", last_name="Doe")
-            Book.objects.create(
-                id=1,
-                title="Some Title",
-                author_id=1,
-                summary="A short summary.",
-                isbn="1234567890000",
-            )
-            BookInstance.objects.create(
-                id="00000000-0000-0000-0000-000000000001",
-                book_id=1,
-                imprint="Foo Imprint",
-                due_back="2020-01-01",
-                status="o",
-            )
+    def setUp(self) -> None:
+        Author.objects.create(id=1, first_name="John", last_name="Doe")
+        Book.objects.create(
+            id=1,
+            title="Some Title",
+            author_id=1,
+            summary="A short summary.",
+            isbn="1234567890000",
+        )
 
+    def test_get(self) -> None:
+        BookInstance.objects.create(
+            id="00000000-0000-0000-0000-000000000001",
+            book_id=1,
+            imprint="Foo Imprint",
+            due_back="2020-01-01",
+            status="o",
+        )
         res = self.client.get("/catalog/bookinstances/")
 
         self.assertEqual(res.status_code, 200)
@@ -100,6 +113,16 @@ class BookInstanceListViewTestCase(TestCase):
             str(res.context["bookinstance_list"].first().id),
             "00000000-0000-0000-0000-000000000001",
         )
+
+    def test_pagination(self) -> None:
+        BookInstance.objects.bulk_create(
+            [BookInstance(book_id=1, imprint=f"Imprint{i}") for i in range(11)]
+        )
+        res = self.client.get("/catalog/bookinstances/")
+
+        self.assertTrue(res.context["is_paginated"])
+        self.assertEqual(res.context["paginator"].num_pages, 2)
+        self.assertEqual(res.context["paginator"].per_page, 10)
 
 
 class BookInstanceDetailViewTestCase(TestCase):
@@ -134,23 +157,41 @@ class BookInstanceDetailViewTestCase(TestCase):
 
 
 class BookListViewTestCase(TestCase):
-    def test_get(self) -> None:
-        with atomic():
-            Author.objects.create(id=1, first_name="John", last_name="Doe")
-            Book.objects.create(
-                id=1,
-                title="Some Title",
-                author_id=1,
-                summary="A short summary.",
-                isbn="1234567890000",
-            )
+    def setUp(self) -> None:
+        Author.objects.create(id=1, first_name="John", last_name="Doe")
 
+    def test_get(self) -> None:
+        Book.objects.create(
+            id=1,
+            title="Some Title",
+            author_id=1,
+            summary="A short summary.",
+            isbn="1234567890000",
+        )
         res = self.client.get("/catalog/books/")
 
         self.assertEqual(res.status_code, 200)
         self.assertTemplateUsed(res, "catalog/book_list.html")
         self.assertEqual(res.context["book_list"].count(), 1)
         self.assertEqual(res.context["book_list"].first().id, 1)
+
+    def test_pagination(self) -> None:
+        Book.objects.bulk_create(
+            [
+                Book(
+                    title=f"Title{i}",
+                    author_id=1,
+                    summary=f"Summary{i}",
+                    isbn=f"12345678900{i:02}",
+                )
+                for i in range(11)
+            ]
+        )
+        res = self.client.get("/catalog/books/")
+
+        self.assertTrue(res.context["is_paginated"])
+        self.assertEqual(res.context["paginator"].num_pages, 2)
+        self.assertEqual(res.context["paginator"].per_page, 10)
 
 
 class BookDetailViewTestCase(TestCase):
@@ -182,6 +223,14 @@ class GenreListViewTestCase(TestCase):
         self.assertTemplateUsed(res, "catalog/genre_list.html")
         self.assertEqual(res.context["genre_list"].count(), 1)
         self.assertEqual(res.context["genre_list"].first().id, 1)
+
+    def test_pagination(self) -> None:
+        Genre.objects.bulk_create([Genre(name=f"Genre{i}") for i in range(11)])
+        res = self.client.get("/catalog/genres/")
+
+        self.assertTrue(res.context["is_paginated"])
+        self.assertEqual(res.context["paginator"].num_pages, 2)
+        self.assertEqual(res.context["paginator"].per_page, 10)
 
 
 class GenreDetailViewTestCase(TestCase):

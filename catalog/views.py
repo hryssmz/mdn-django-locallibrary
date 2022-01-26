@@ -21,6 +21,7 @@ def index(request: HttpRequest) -> HttpResponse:
 
 class AuthorListView(generic.ListView[Author]):
     model = Author
+    paginate_by = 10
 
 
 class AuthorDetailView(generic.DetailView[Author]):
@@ -29,6 +30,7 @@ class AuthorDetailView(generic.DetailView[Author]):
 
 class BookListView(generic.ListView[Book]):
     model = Book
+    paginate_by = 10
 
 
 class BookDetailView(generic.DetailView[Book]):
@@ -37,6 +39,7 @@ class BookDetailView(generic.DetailView[Book]):
 
 class BookInstanceListView(generic.ListView[BookInstance]):
     model = BookInstance
+    paginate_by = 10
 
 
 class BookInstanceDetailView(generic.DetailView[BookInstance]):
@@ -45,6 +48,7 @@ class BookInstanceDetailView(generic.DetailView[BookInstance]):
 
 class GenreListView(generic.ListView[Genre]):
     model = Genre
+    paginate_by = 10
 
 
 class GenreDetailView(generic.DetailView[Genre]):

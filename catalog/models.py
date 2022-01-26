@@ -31,6 +31,9 @@ class Author(models.Model):
     def __str__(self) -> str:
         return self.name
 
+    class Meta:
+        ordering = ["id"]
+
 
 class Book(models.Model):
     title = models.CharField(max_length=200)
@@ -45,6 +48,9 @@ class Book(models.Model):
 
     def __str__(self) -> str:
         return self.title
+
+    class Meta:
+        ordering = ["id"]
 
 
 class BookInstance(models.Model):
@@ -73,6 +79,9 @@ class BookInstance(models.Model):
     def __str__(self) -> str:
         return f"{self.id} ({self.book.title})"
 
+    class Meta:
+        ordering = ["id"]
+
 
 class Genre(models.Model):
     name = models.CharField(max_length=200)
@@ -83,3 +92,6 @@ class Genre(models.Model):
 
     def __str__(self) -> str:
         return self.name
+
+    class Meta:
+        ordering = ["id"]

@@ -1,5 +1,5 @@
 # catalog/tests/test_serializers.py
-from django.test import TestCase
+from rest_framework.test import APITestCase
 
 from ..models import Author, Book, BookInstance, Genre
 from ..serializers import (
@@ -10,7 +10,7 @@ from ..serializers import (
 )
 
 
-class AuthorSerializerTestCase(TestCase):
+class AuthorSerializerTestCase(APITestCase):
     def test_serialize(self) -> None:
         Author.objects.create(
             id=1,
@@ -40,7 +40,7 @@ class AuthorSerializerTestCase(TestCase):
         self.assertEqual(Author.objects.count(), 1)
 
 
-class BookInstanceSerializerTestCase(TestCase):
+class BookInstanceSerializerTestCase(APITestCase):
     def setUp(self) -> None:
         Author.objects.create(id=1, first_name="John", last_name="Doe")
         Book.objects.create(
@@ -51,7 +51,7 @@ class BookInstanceSerializerTestCase(TestCase):
             isbn="1234567890000",
         )
 
-    def test_serialize_many(self) -> None:
+    def test_serialize(self) -> None:
         BookInstance.objects.create(
             id="00000000-0000-0000-0000-000000000001",
             book_id=1,
@@ -81,7 +81,7 @@ class BookInstanceSerializerTestCase(TestCase):
         self.assertEqual(BookInstance.objects.count(), 1)
 
 
-class BookSerializerTestCase(TestCase):
+class BookSerializerTestCase(APITestCase):
     def setUp(self) -> None:
         Author.objects.create(id=1, first_name="John", last_name="Doe")
         Genre.objects.create(id=1, name="Fantasy")
@@ -125,7 +125,7 @@ class BookSerializerTestCase(TestCase):
         self.assertEqual(Book.objects.get(id=1).genre.all().count(), 1)
 
 
-class GenreSerializerTestCase(TestCase):
+class GenreSerializerTestCase(APITestCase):
     def test_serialize(self) -> None:
         Genre.objects.create(id=1, name="Fantasy")
         ser = GenreSerializer(Genre.objects.get(id=1))
