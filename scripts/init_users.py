@@ -1,4 +1,4 @@
-# scripts/init_users.py
+#!/usr/bin/env python
 def main() -> None:
     from django.contrib.auth.models import User
 

@@ -43,6 +43,7 @@ pip install coverage
 pip install flake8
 pip install isort
 pip install mypy
+pip install pre-commit
 ```
 
 #### 2.1.2. Django

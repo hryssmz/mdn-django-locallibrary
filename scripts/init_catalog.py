@@ -1,4 +1,4 @@
-# scripts/init_catalog.py
+#!/usr/bin/env python
 from typing import Optional
 
 
