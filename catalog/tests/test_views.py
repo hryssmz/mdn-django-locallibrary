@@ -39,6 +39,13 @@ class IndexTestCase(TestCase):
         self.assertEqual(res.context["num_instances_available"], 1)
         self.assertEqual(res.context["num_authors"], 1)
         self.assertEqual(res.context["num_genres"], 1)
+        self.assertEqual(res.context["num_visits"], 0)
+
+    def test_num_visits(self) -> None:
+        self.client.get("/catalog/")
+        res = self.client.get("/catalog/")
+
+        self.assertEqual(res.context["num_visits"], 1)
 
 
 class AuthorListViewTestCase(TestCase):

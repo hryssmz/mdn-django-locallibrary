@@ -41,8 +41,16 @@ class IndexApiTestCase(APITestCase):
                 "num_instances_available": 1,
                 "num_authors": 1,
                 "num_genres": 1,
+                "num_visits": 0,
             },
         )
+
+    def test_num_visits(self) -> None:
+        self.client.get("/catalog/api/")
+        res = self.client.get("/catalog/api/")
+        data = res.json()
+
+        self.assertEqual(data["num_visits"], 1)
 
 
 class AuthorListAPIViewTestCase(APITestCase):

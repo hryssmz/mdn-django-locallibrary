@@ -15,6 +15,8 @@ from .serializers import (
 
 @api_view()
 def index_api(request: Request) -> Response:
+    num_visits = request.session.get("num_visits", 0)
+    request.session["num_visits"] = num_visits + 1
     data = {
         "num_books": Book.objects.all().count(),
         "num_instances": BookInstance.objects.all().count(),
@@ -23,6 +25,7 @@ def index_api(request: Request) -> Response:
         ).count(),
         "num_authors": Author.objects.all().count(),
         "num_genres": Genre.objects.all().count(),
+        "num_visits": num_visits,
     }
     return Response(data)
 

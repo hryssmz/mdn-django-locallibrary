@@ -7,6 +7,8 @@ from .models import Author, Book, BookInstance, Genre
 
 
 def index(request: HttpRequest) -> HttpResponse:
+    num_visits = request.session.get("num_visits", 0)
+    request.session["num_visits"] = num_visits + 1
     context = {
         "num_books": Book.objects.all().count(),
         "num_instances": BookInstance.objects.all().count(),
@@ -15,6 +17,7 @@ def index(request: HttpRequest) -> HttpResponse:
         ).count(),
         "num_authors": Author.objects.all().count(),
         "num_genres": Genre.objects.all().count(),
+        "num_visits": num_visits,
     }
     return render(request, "catalog/index.html", context=context)
 
