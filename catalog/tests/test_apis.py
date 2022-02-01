@@ -29,7 +29,6 @@ class IndexApiTestCase(APITestCase):
                 imprint="Bar Imprint",
                 status="a",
             )
-
         res = self.client.get("/catalog/api/")
 
         self.assertEqual(res.status_code, 200)
@@ -118,7 +117,6 @@ class BookInstanceListAPIViewTestCase(APITestCase):
                 due_back="2020-01-01",
                 status="o",
             )
-
         res = self.client.get("/catalog/api/bookinstances/")
 
         self.assertEqual(res.status_code, 200)
@@ -153,7 +151,6 @@ class BookInstanceDetailAPIViewTestCase(APITestCase):
                 due_back="2020-01-01",
                 status="o",
             )
-
         res = self.client.get(
             "/catalog/api/bookinstance/00000000-0000-0000-0000-000000000001/"
         )
@@ -182,7 +179,6 @@ class BookListAPIViewTestCase(APITestCase):
                 summary="A short summary.",
                 isbn="1234567890000",
             )
-
         res = self.client.get("/catalog/api/books/")
 
         self.assertEqual(res.status_code, 200)
@@ -211,7 +207,6 @@ class BookDetailAPIViewTestCase(APITestCase):
                 summary="A short summary.",
                 isbn="1234567890000",
             )
-
         res = self.client.get("/catalog/api/book/1/")
 
         self.assertEqual(res.status_code, 200)
@@ -231,7 +226,6 @@ class BookDetailAPIViewTestCase(APITestCase):
 class GenreListAPIViewTestCase(APITestCase):
     def test_get(self) -> None:
         Genre.objects.create(id=1, name="Fantasy")
-
         res = self.client.get("/catalog/api/genres/")
 
         self.assertEqual(res.status_code, 200)
@@ -242,7 +236,6 @@ class GenreListAPIViewTestCase(APITestCase):
 class GenreDetailAPIViewTestCase(APITestCase):
     def test_get(self) -> None:
         Genre.objects.create(id=1, name="Fantasy")
-
         res = self.client.get("/catalog/api/genre/1/")
 
         self.assertEqual(res.status_code, 200)

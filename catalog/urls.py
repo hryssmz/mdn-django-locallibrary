@@ -23,6 +23,11 @@ urlpatterns = [
     ),
     path("genres/", views.GenreListView.as_view(), name="genres"),
     path("genre/<int:pk>/", views.GenreDetailView.as_view(), name="genre"),
+    path(
+        "mybooks/",
+        views.LoanedBooksByUserListView.as_view(),
+        name="my-borrowed",
+    ),
     # APIs
     path("api/", apis.index_api, name="index-api"),
     path("api/authors/", apis.AuthorListAPIView.as_view(), name="authors-api"),

@@ -1,6 +1,8 @@
 # catalog/models.py
+from datetime import date
 import uuid
 
+from django.contrib.auth.models import User
 from django.db import models
 from django.urls import reverse
 
@@ -67,6 +69,9 @@ class BookInstance(models.Model):
     status = models.CharField(
         max_length=1, choices=LOAN_STATUS, blank=True, default="m"
     )
+    borrower = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True, blank=True
+    )
 
     @property
     def url(self) -> str:
@@ -76,11 +81,16 @@ class BookInstance(models.Model):
     def due_back_display(self) -> str:
         return format_date(self.due_back)
 
+    @property
+    def is_overdue(self) -> bool:
+        return self.due_back and date.today() > self.due_back or False
+
     def __str__(self) -> str:
         return f"{self.id} ({self.book.title})"
 
     class Meta:
         ordering = ["id"]
+        permissions = (("can_mark_returned", "Set book as returned"),)
 
 
 class Genre(models.Model):

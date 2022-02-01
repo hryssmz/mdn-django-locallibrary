@@ -6,7 +6,7 @@
       "type": "python",
       "request": "launch",
       "program": "${workspaceFolder}/manage.py",
-      "args": ["runserver", "0:8000"],
+      "args": ["runserver", "0:8000", "--noreload"],
       "django": true
     },
     {

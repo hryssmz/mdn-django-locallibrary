@@ -1,5 +1,6 @@
 # catalog/tests/test_views.py
-from django.db.transaction import atomic
+from django.contrib.auth.models import User
+from django.db import transaction
 from django.test import TestCase
 
 from ..models import Author, Book, BookInstance, Genre
@@ -7,7 +8,7 @@ from ..models import Author, Book, BookInstance, Genre
 
 class IndexTestCase(TestCase):
     def test_get(self) -> None:
-        with atomic():
+        with transaction.atomic():
             Author.objects.create(id=1, first_name="John", last_name="Doe")
             Genre.objects.create(id=1, name="Fantasy")
             Book.objects.create(
@@ -134,7 +135,7 @@ class BookInstanceListViewTestCase(TestCase):
 
 class BookInstanceDetailViewTestCase(TestCase):
     def test_get(self) -> None:
-        with atomic():
+        with transaction.atomic():
             Author.objects.create(id=1, first_name="John", last_name="Doe")
             Book.objects.create(
                 id=1,
@@ -180,7 +181,6 @@ class BookListViewTestCase(TestCase):
         self.assertEqual(res.status_code, 200)
         self.assertTemplateUsed(res, "catalog/book_list.html")
         self.assertEqual(res.context["book_list"].count(), 1)
-        self.assertEqual(res.context["book_list"].first().id, 1)
 
     def test_pagination(self) -> None:
         Book.objects.bulk_create(
@@ -203,7 +203,7 @@ class BookListViewTestCase(TestCase):
 
 class BookDetailViewTestCase(TestCase):
     def test_get(self) -> None:
-        with atomic():
+        with transaction.atomic():
             Author.objects.create(id=1, first_name="John", last_name="Doe")
             Book.objects.create(
                 id=1,
@@ -223,7 +223,6 @@ class BookDetailViewTestCase(TestCase):
 class GenreListViewTestCase(TestCase):
     def test_get(self) -> None:
         Genre.objects.create(id=1, name="Fantasy")
-
         res = self.client.get("/catalog/genres/")
 
         self.assertEqual(res.status_code, 200)
@@ -243,9 +242,66 @@ class GenreListViewTestCase(TestCase):
 class GenreDetailViewTestCase(TestCase):
     def test_get(self) -> None:
         Genre.objects.create(id=1, name="Fantasy")
-
         res = self.client.get("/catalog/genre/1/")
 
         self.assertEqual(res.status_code, 200)
         self.assertTemplateUsed(res, "catalog/genre_detail.html")
         self.assertEqual(res.context["genre"].id, 1)
+
+
+class LoanedBooksByUserListViewTestCase(TestCase):
+    def setUp(self) -> None:
+        User.objects.create_user(
+            username="john", email="john@example.com", password="secret"
+        )
+        Author.objects.create(id=1, first_name="John", last_name="Doe")
+        Book.objects.create(
+            id=1,
+            title="Some Title",
+            author_id=1,
+            summary="A short summary.",
+            isbn="1234567890000",
+        )
+        BookInstance.objects.create(
+            id="00000000-0000-0000-0000-000000000001",
+            book_id=1,
+            imprint="Foo Imprint",
+            due_back="2020-01-01",
+            status="o",
+        )
+
+    def test_get(self) -> None:
+        self.client.login(username="john", password="secret")
+        res = self.client.get("/catalog/mybooks/")
+
+        self.assertEqual(res.status_code, 200)
+        self.assertTemplateUsed(
+            res, "catalog/bookinstance_list_borrowed_user.html"
+        )
+        self.assertEqual(res.context["bookinstance_list"].count(), 0)
+
+    def test_get_with_borrow(self) -> None:
+        BookInstance.objects.filter(id=1).update(
+            borrower=User.objects.get(username="john")
+        )
+
+        self.client.login(username="john", password="secret")
+        res = self.client.get("/catalog/mybooks/")
+
+        self.assertEqual(res.status_code, 200)
+        self.assertTemplateUsed(
+            res, "catalog/bookinstance_list_borrowed_user.html"
+        )
+        self.assertEqual(res.context["bookinstance_list"].count(), 1)
+        self.assertEqual(
+            str(res.context["bookinstance_list"].first().id),
+            "00000000-0000-0000-0000-000000000001",
+        )
+
+    def test_get_without_login(self) -> None:
+        res = self.client.get("/catalog/mybooks/")
+
+        self.assertEqual(res.status_code, 302)
+        self.assertRedirects(
+            res, "/accounts/login/?next=%2Fcatalog%2Fmybooks%2F"
+        )

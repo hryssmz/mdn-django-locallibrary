@@ -1,5 +1,7 @@
 # catalog/tests/test_models.py
-from django.db.transaction import atomic
+from datetime import date, timedelta
+
+from django.db import transaction
 from django.test import TestCase
 
 from ..models import Author, Book, BookInstance, Genre
@@ -23,10 +25,9 @@ class AuthorTestCase(TestCase):
 
 class BookTestCase(TestCase):
     def test_create_retrieve_book(self) -> None:
-        with atomic():
+        with transaction.atomic():
             Author.objects.create(id=1, first_name="John", last_name="Doe")
             Genre.objects.create(id=1, name="Fantasy")
-
         Book.objects.create(
             id=1,
             title="Some Title",
@@ -43,17 +44,18 @@ class BookTestCase(TestCase):
 
 
 class BookInstanceTestCase(TestCase):
-    def test_create_retrieve_bookinstance(self) -> None:
-        with atomic():
-            Author.objects.create(id=1, first_name="John", last_name="Doe")
-            Book.objects.create(
-                id=1,
-                title="Some Title",
-                author_id=1,
-                summary="A short summary.",
-                isbn="1234567890000",
-            )
+    @transaction.atomic()
+    def setUp(self) -> None:
+        Author.objects.create(id=1, first_name="John", last_name="Doe")
+        Book.objects.create(
+            id=1,
+            title="Some Title",
+            author_id=1,
+            summary="A short summary.",
+            isbn="1234567890000",
+        )
 
+    def test_create_retrieve_bookinstance(self) -> None:
         BookInstance.objects.create(
             id="00000000-0000-0000-0000-000000000001",
             book_id=1,
@@ -75,19 +77,41 @@ class BookInstanceTestCase(TestCase):
             "00000000-0000-0000-0000-000000000001 (Some Title)",
         )
 
+    def test_is_overdue(self) -> None:
+        BookInstance.objects.create(
+            id="00000000-0000-0000-0000-000000000001",
+            book_id=1,
+            imprint="Foo Imprint",
+            status="o",
+        )
+        bookinstance: BookInstance = BookInstance.objects.get(
+            id="00000000-0000-0000-0000-000000000001"
+        )
+
+        self.assertFalse(bookinstance.is_overdue)
+
+        bookinstance.due_back = date.today()
+
+        self.assertFalse(bookinstance.is_overdue)
+
+        bookinstance.due_back = date.today() - timedelta(days=1)
+
+        self.assertTrue(bookinstance.is_overdue)
+
 
 class GenreTestCase(TestCase):
-    def test_create_retrieve_genre(self) -> None:
-        with atomic():
-            Author.objects.create(id=1, first_name="John", last_name="Doe")
-            Book.objects.create(
-                id=1,
-                title="Some Title",
-                author_id=1,
-                summary="A short summary.",
-                isbn="1234567890000",
-            )
+    @transaction.atomic()
+    def setUp(self) -> None:
+        Author.objects.create(id=1, first_name="John", last_name="Doe")
+        Book.objects.create(
+            id=1,
+            title="Some Title",
+            author_id=1,
+            summary="A short summary.",
+            isbn="1234567890000",
+        )
 
+    def test_create_retrieve_genre(self) -> None:
         Genre.objects.create(id=1, name="Fantasy")
         genre = Genre.objects.get(id=1)
         genre.book_set.add(1)

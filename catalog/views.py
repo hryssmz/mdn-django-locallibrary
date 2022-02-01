@@ -1,4 +1,6 @@
 # catalog/views.py
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import QuerySet
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 from django.views import generic
@@ -56,3 +58,16 @@ class GenreListView(generic.ListView[Genre]):
 
 class GenreDetailView(generic.DetailView[Genre]):
     model = Genre
+
+
+class LoanedBooksByUserListView(
+    LoginRequiredMixin, generic.ListView[BookInstance]
+):
+    model = BookInstance
+    template_name = "catalog/bookinstance_list_borrowed_user.html"
+    paginated_by = 10
+
+    def get_queryset(self) -> QuerySet[BookInstance]:
+        return BookInstance.objects.filter(  # type: ignore
+            borrower=self.request.user
+        )
